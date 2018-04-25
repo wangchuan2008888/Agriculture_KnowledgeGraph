@@ -16,6 +16,7 @@ class AgriItem(scrapy.Item):
     
 class HudongItem(scrapy.Item):
     # Item 对应互动百科中的一个词条
+
     title = scrapy.Field()  #标题
     url = scrapy.Field()  #对于互动百科页面的链接
     image = scrapy.Field()  #图片
