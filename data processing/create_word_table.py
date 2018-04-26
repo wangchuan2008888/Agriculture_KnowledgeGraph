@@ -53,15 +53,18 @@ def createWordSet(x):
 	i = 0
 	n = len(x)
 	S = set()
+	# 遍历每一个detail分好的词
 	while i < n:
+		# 先通过judge函数结合分词的第一个部分判断该词是否应该舍弃
 		if judge(x[i][0]) == False :
 			i += 1
 			continue;
+		# 	如果需要舍弃的话
 		if x[i][1] == 'n':   # n 
 			S.add(x[i][0])
-			if i >= 1 and judge(x[i-1][0]) and preok(x[i-1][1]):   # all+n
-				S.add(x[i-1][0]+x[i][0])
-		if nowok(x[i][1]):  #other
+			if i >= 1 and judge(x[i-1][0]) and preok(x[i-1][1]):   # all+n #如果当前词的上一个词可用，上一个词性符合要求
+				S.add(x[i-1][0]+x[i][0])       #将上一个词跟当前词拼接，并存入set集合中
+		if nowok(x[i][1]):  #other  ## 	如果当前词的词性为n,np,ns,ni,nz,a,i,j,x,id,g,u,t,m中的，就存储该词
 			S.add(x[i][0])
 			
 		i += 1
@@ -72,12 +75,14 @@ def createWordSet(x):
 def createTable(num):
 	start = time.time()
 	thu = thulac.thulac()
-	file = open('agri_economic.json', encoding='utf-8')
+	# file = open('agri_economic.json', encoding='utf-8')
+	file = open('test.json', encoding='utf-8')
 	print("begin!")
 	table = set()
 	f = json.load(file)
 	count = 0
 	file_text = ""
+	# 逐行解读agri_economic.json文件中的json单元格
 	for p in f:
 		count += 1
 		if int(count/2000) != num:
@@ -87,13 +92,15 @@ def createTable(num):
 			print("now id : " + str(count) + "  table size :" + str(len(table)))
 			print("Running Time : " + str(int(cur-start)) + " s......")
 		detail = p['detail']
+# 		用于判断detail的长度
 #		if len(detail) > 600:
 #			detail = detail[0:600]
 		title = p['title']
 		table.add(title)
-		# 分词
+		# 分词，该步利用thulac方法对detail进行分词
 		text = thu.cut(detail)
-		table = table | createWordSet(text)
+		# 用上一步得到的分词结果提取NER
+		table = table | createWordSet(text)   #
 				
 	for t in table:
 		file_text += t+' '
@@ -101,27 +108,28 @@ def createTable(num):
 	file_object.write(file_text)
 	file_object.close()
 
-#createTable(0)
+# createTable(0)
 #createTable(1)
 #createTable(2)
 #createTable(3)
 #createTable(4)
 #createTable(5)
-createTable(6)
-createTable(7)
-createTable(8)
-createTable(9)
+# createTable(6)
+# createTable(7)
+# createTable(8)
+# createTable(9)
 
-#test()
+
 	
 	
-#def test():  
-#	thu = thulac.thulac()
-#	detail = "指在干旱、半干旱地区依靠自然降水栽培小麦。"
-#	text = thu.cut(detail)
-#	for x in text:
-#		print(x[1])
-#		
+# def test():
+# 	thu = thulac.thulac()
+# 	detail = "指在干旱、半干旱地区依靠自然降水栽培小麦。"
+# 	text = thu.cut(detail)
+# 	for x in text:
+# 		print(x[1])
 
+# if __name__ == '__main__':
+# 	createTable(0)
 		
 		
